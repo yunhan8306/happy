@@ -1,20 +1,27 @@
 package com.example.happy.presentation.list
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.happy.common.base.BaseActivity
 import com.example.happy.common.util.LifecycleOwnerWrapper
 import com.example.happy.common.util.ScrollLinearLayoutManager
+import com.example.happy.common.util.safeLaunch
 import com.example.happy.common.util.showToast
 import com.example.happy.common.util.visible
 import com.example.happy.databinding.ActivityListBinding
+import com.example.happy.model.CollectionData
+import com.example.happy.model.SearchListStatus
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWrapper {
+
+    private val viewModel: SearchListViewModel by viewModels()
 
     private val linearLayoutManager by lazy { ScrollLinearLayoutManager(this) }
 
@@ -41,27 +48,27 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
         }
     }
 
-    private fun collectViewModel() {
-        val testList = listOf(
-            CollectionData(1),
-            CollectionData(2),
-            CollectionData(3),
-            CollectionData(4),
-            CollectionData(5),
-            CollectionData(6),
-            CollectionData(7),
-            CollectionData(8),
-            CollectionData(9),
-            CollectionData(10),
-            CollectionData(11),
-            CollectionData(12),
-            CollectionData(13),
-            CollectionData(14),
-            CollectionData(15),
-        )
-        searchListAdapter.submit(testList) {
-            lifecycleScope.launch {
-                searchListAdapter.refresh = false
+    private fun collectViewModel() = with(viewModel) {
+        lifecycleScope.safeLaunch {
+            searchListStatus.collectLatest { status ->
+                when(status) {
+                    is SearchListStatus.Success -> {
+                        searchListAdapter.submit(status.list) {
+                            lifecycleScope.safeLaunch {
+                                searchListAdapter.refresh = false
+                            }
+                        }
+                    }
+                    is SearchListStatus.Fail -> {
+                        showToast("실패")
+                    }
+                    is SearchListStatus.EmptyData -> {
+                        showToast("데이터가 없습니다")
+                    }
+                    is SearchListStatus.Loading -> {
+                        showToast("로딩중")
+                    }
+                }
             }
         }
     }
@@ -75,7 +82,6 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                // 스크롤이 끝에 도달했는지 확인
                 val currentItemIdx = linearLayoutManager.findLastCompletelyVisibleItemPosition()
                 val lastItemIdx = searchListAdapter.itemCount - 1
 
@@ -94,7 +100,7 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
     }
 
     private fun loadMore() {
-        showToast("로드 시도 중")
+        viewModel.getSearchList()
     }
 
     private fun showDetailActivity(data: CollectionData) {

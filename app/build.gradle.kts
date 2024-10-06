@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.dagger.hilt.android.plugin) // Hilt 플러그인 추가
+    id("kotlin-kapt")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -40,6 +43,10 @@ android {
         jvmTarget = "17"  // 수정됨: Kotlin 2.0.20에 맞춰 JVM 타겟을 17로 변경 (원래 1.8이었음)
     }
 
+    kapt {
+        correctErrorTypes = true // Hilt와의 호환성을 높이기 위해 에러 타입을 교정
+    }
+
     buildFeatures {
         compose = true
         viewBinding = true
@@ -68,7 +75,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.dagger.hilt.android)
-    implementation(libs.dagger.hilt.android.compiler)
+    kapt(libs.dagger.hilt.android.compiler)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
@@ -77,6 +84,14 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.glide)
     implementation(libs.glide.compiler)
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.converter.scalars)
+    implementation(libs.retrofit.jakewharton.flow.adapter)
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
 

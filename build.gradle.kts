@@ -4,4 +4,5 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.dagger.hilt.android.plugin) apply false  // Hilt 플러그인 추가
+    alias(libs.plugins.kotlin.serialization) apply false
 }

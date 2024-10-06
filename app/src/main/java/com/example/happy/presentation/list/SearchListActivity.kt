@@ -1,7 +1,11 @@
 package com.example.happy.presentation.list
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -80,7 +84,17 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
     private fun addListeners() = with(binding) {
         btnTop.setFirstClickEvent {
             lifecycleScope.safeLaunch {
+                hideKeyBoard()
                 recyclerViewCollection.smoothScrollToPosition(0)
+            }
+        }
+
+        btnSearch.setFirstClickEvent {
+            lifecycleScope.safeLaunch {
+                searchListAdapter.refresh = true
+                viewModel.refresh()
+                hideKeyBoard()
+                viewModel.getSearchList(editTextInput.text.toString())
             }
         }
 
@@ -103,6 +117,14 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
                 if(btnTop.isVisible != topBtnVisible) btnTop.visible(topBtnVisible)
             }
         })
+
+        editTextInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                btnSearch.visible(editTextInput.text.length >= 2)
+            }
+        })
     }
 
     private fun loadMore() {
@@ -114,5 +136,10 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
             putExtra("data", data)
             launcher.launch(this)
         }
+    }
+
+    private fun hideKeyBoard() {
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.editTextInput.windowToken, 0)
     }
 }

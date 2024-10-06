@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.recyclerview)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
 

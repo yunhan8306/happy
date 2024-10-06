@@ -1,10 +1,12 @@
 package com.example.happy.presentation.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.happy.common.base.BaseFragment
 import com.example.happy.databinding.FragmentSearchBinding
+import com.example.happy.presentation.list.ListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -22,11 +24,13 @@ class SearchFragment @Inject constructor() : BaseFragment<FragmentSearchBinding>
 
     private fun addListeners() = with(binding) {
         btnSearch.setFirstClickEvent(200) {
-            startSearchActivity()
+            startListActivity()
         }
     }
 
-    private fun startSearchActivity() {
-
+    private fun startListActivity() {
+        Intent(requireActivity(), ListActivity::class.java).apply {
+            launcher.launch(this)
+        }
     }
 }

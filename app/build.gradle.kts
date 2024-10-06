@@ -42,6 +42,8 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
+        dataBinding = true
     }
 
     composeOptions {
@@ -67,6 +69,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.dagger.hilt.android)
     implementation(libs.dagger.hilt.android.compiler)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.fragment.ktx)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
 

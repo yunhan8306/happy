@@ -1,47 +1,31 @@
 package com.example.happy
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.happy.ui.theme.HappyTheme
+import com.example.happy.common.base.BaseActivity
+import com.example.happy.databinding.ActivityMainBinding
+import com.example.happy.common.util.LifecycleOwnerWrapper
+import com.example.happy.common.util.addFragment
+import com.example.happy.presentation.navigation.NavigationFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            HappyTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
+@AndroidEntryPoint
+class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper {
+
+    private var navigationFragment: NavigationFragment? = null
+
+    override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
+
+    override fun initActivity(savedInstanceState: Bundle?) {
+        collectViewModel()
+        addNavigationFragment()
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    private fun collectViewModel() {
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HappyTheme {
-        Greeting("Android")
+    }
+
+    private fun addNavigationFragment() {
+        navigationFragment = NavigationFragment()
+        addFragment(R.id.containerNavigation, navigationFragment)
     }
 }

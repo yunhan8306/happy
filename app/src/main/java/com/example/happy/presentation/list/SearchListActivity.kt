@@ -68,6 +68,9 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
                     is SearchListStatus.Loading -> {
                         showToast("로딩중")
                     }
+                    is SearchListStatus.End -> {
+                        showToast("더 이상 데이터가 없습니다")
+                    }
                 }
             }
         }
@@ -75,7 +78,9 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
 
     private fun addListeners() = with(binding) {
         btnTop.setFirstClickEvent {
-            recyclerViewCollection.scrollToPosition(0)
+            lifecycleScope.safeLaunch {
+                recyclerViewCollection.smoothScrollToPosition(0)
+            }
         }
 
         recyclerViewCollection.addOnScrollListener(object : RecyclerView.OnScrollListener() {

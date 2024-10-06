@@ -23,11 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.happy.R
-import com.example.happy.model.CollectionData
 
 @Composable
 fun DetailScreen(
-    state: CollectionData,
+    state: DetailState,
     onAction: (DetailAction) -> Unit
 ) {
     val scroll = rememberScrollState()
@@ -49,13 +48,13 @@ fun DetailScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = state.titleKor,
+                text = state.data.titleKor,
                 fontSize = 25.sp
             )
         }
         Box(
             modifier = Modifier
-                .background(Color.Black)
+                .background(if(state.isLike) Color.Yellow else Color.Black)
                 .clickableNoRipple { onAction.invoke(DetailAction.AddLike) }
         ) {
             Text(
@@ -73,7 +72,7 @@ fun DetailScreen(
             .verticalScroll(scroll)
     ) {
         SubcomposeAsyncImage(
-            model = state.mainUri,
+            model = state.data.mainUri,
             contentDescription = "collection image",
             modifier = Modifier.aspectRatio(1f),
             contentScale = ContentScale.Crop,
@@ -91,7 +90,7 @@ fun DetailScreen(
                 text = "작가명"
             )
             Text(
-                text = state.writerName
+                text = state.data.writerName
             )
         }
         Row(
@@ -104,7 +103,7 @@ fun DetailScreen(
                 text = "제작연도"
             )
             Text(
-                text = state.madeYear
+                text = state.data.madeYear
             )
         }
         Row(
@@ -117,7 +116,7 @@ fun DetailScreen(
                 text = "부문"
             )
             Text(
-                text = state.category
+                text = state.data.category
             )
         }
         Row(
@@ -130,7 +129,7 @@ fun DetailScreen(
                 text = "규격"
             )
             Text(
-                text = state.standard
+                text = state.data.standard
             )
         }
         Row(
@@ -143,7 +142,7 @@ fun DetailScreen(
                 text = "수집년도"
             )
             Text(
-                text = state.manageYear
+                text = state.data.manageYear
             )
         }
         Row(
@@ -156,7 +155,7 @@ fun DetailScreen(
                 text = "재료 및 기법"
             )
             Text(
-                text = state.technic
+                text = state.data.technic
             )
         }
     }

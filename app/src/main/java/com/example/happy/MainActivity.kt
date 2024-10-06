@@ -9,6 +9,7 @@ import com.example.happy.common.util.LifecycleOwnerWrapper
 import com.example.happy.common.util.addFragment
 import com.example.happy.common.util.hideFragment
 import com.example.happy.common.util.showFragment
+import com.example.happy.presentation.like.LikeFragment
 import com.example.happy.presentation.navigation.NavigationFragment
 import com.example.happy.presentation.navigation.NavigationType
 import com.example.happy.presentation.navigation.NavigationViewModel
@@ -22,6 +23,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper 
 
     private var navigationFragment: NavigationFragment? = null
     private var searchFragment: SearchFragment? = null
+    private var likeFragment: LikeFragment? = null
 
     private var onTopFragment : Fragment? = null
 
@@ -56,7 +58,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper 
                 }
             }
             is NavigationType.Like -> {
-
+                if(likeFragment == null) {
+                    likeFragment = LikeFragment()
+                    addFragment(R.id.containerMain, likeFragment)
+                } else {
+                    showFragment(likeFragment)
+                }
             }
         }
 
@@ -66,6 +73,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper 
     private fun getNavigationFragment(navigationType: NavigationType) =
         when(navigationType) {
             is NavigationType.Search -> searchFragment
-            is NavigationType.Like -> null
+            is NavigationType.Like -> likeFragment
         }
 }

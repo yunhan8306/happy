@@ -1,5 +1,6 @@
 package com.example.happy.presentation.list
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -14,9 +15,9 @@ import com.example.happy.common.util.visible
 import com.example.happy.databinding.ActivityListBinding
 import com.example.happy.model.CollectionData
 import com.example.happy.model.SearchListStatus
+import com.example.happy.presentation.detail.DetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWrapper {
@@ -109,6 +110,9 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
     }
 
     private fun showDetailActivity(data: CollectionData) {
-        showToast("상세뷰")
+        Intent(this, DetailActivity::class.java).apply {
+            putExtra("data", data)
+            launcher.launch(this)
+        }
     }
 }

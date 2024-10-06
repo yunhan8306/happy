@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.dagger.hilt.android.plugin) // Hilt 플러그인 추가
     id("kotlin-kapt")
     id("kotlinx-serialization")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -75,6 +76,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.dagger.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.dagger.hilt.android.compiler)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)
@@ -92,6 +94,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.coil)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
 

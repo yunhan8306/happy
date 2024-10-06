@@ -1,5 +1,9 @@
 package com.example.happy.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class CollectionData(
     val category: String,
     val manageYear: String,
@@ -12,4 +16,4 @@ data class CollectionData(
     val writerName: String,
     val mainUri: String,
     val thumbUri: String,
-)
+): Parcelable

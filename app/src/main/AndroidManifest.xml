@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.list.ListActivity"
+            android:name=".presentation.list.SearchListActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Happy"

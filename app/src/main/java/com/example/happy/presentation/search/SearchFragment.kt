@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.happy.common.base.BaseFragment
 import com.example.happy.databinding.FragmentSearchBinding
-import com.example.happy.presentation.list.ListActivity
+import com.example.happy.presentation.list.SearchListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class SearchFragment @Inject constructor() : BaseFragment<FragmentSearchBinding>
     }
 
     private fun startListActivity() {
-        Intent(requireActivity(), ListActivity::class.java).apply {
+        Intent(requireActivity(), SearchListActivity::class.java).apply {
             launcher.launch(this)
         }
     }

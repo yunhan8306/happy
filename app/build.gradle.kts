@@ -1,8 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.dagger.hilt.android.plugin) // Hilt 플러그인 추가
+    alias(libs.plugins.dagger.hilt.android.plugin)
     id("kotlin-kapt")
     id("kotlinx-serialization")
     id("kotlin-parcelize")
@@ -19,15 +21,21 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", getSecretsProperty("BASE_URL"))
+        buildConfigField("String", "API_KEY", getSecretsProperty("API_KEY"))
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,16 +44,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17  // 수정됨: Kotlin 2.0.20과 맞춰 Java 17로 변경
-        targetCompatibility = JavaVersion.VERSION_17  // 수정됨: Java 17로 설정 (원래 1.8이었음)
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "17"  // 수정됨: Kotlin 2.0.20에 맞춰 JVM 타겟을 17로 변경 (원래 1.8이었음)
+        jvmTarget = "17"
     }
 
     kapt {
-        correctErrorTypes = true // Hilt와의 호환성을 높이기 위해 에러 타입을 교정
+        correctErrorTypes = true
     }
 
     buildFeatures {
@@ -55,7 +63,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0"  // 수정됨: Compose Compiler Extension 버전을 2.0.0으로 변경 (원래 1.5.1이었음)
+        kotlinCompilerExtensionVersion = "2.0.0"
     }
 
     packaging {
@@ -105,4 +113,11 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+fun getSecretsProperty(name: String): String {
+    val propertiesFile = rootProject.file("secrets.properties")
+    val properties = Properties()
+    properties.load(propertiesFile.inputStream())
+    return properties.getProperty(name)
 }

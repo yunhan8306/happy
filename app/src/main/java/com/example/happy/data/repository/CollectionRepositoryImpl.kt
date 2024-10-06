@@ -19,7 +19,9 @@ class CollectionRepositoryImpl @Inject constructor(
                 // 성공
                 SearchListStatus.Success(
                     totalCnt = response.totalCount ?: 0,
-                    list = response.collectionList?.map { it.toCollectionData() } ?: emptyList()
+                    list = response.collectionList?.mapIndexed { index, collection ->
+                        collection.toCollectionData().copy(id = request.startIndex + index.toLong() + 1)
+                    } ?: emptyList()
                 )
             }
             "INFO-200" -> {

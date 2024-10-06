@@ -23,7 +23,7 @@ class SearchListAdapter(
     var refresh = false
 
     override fun areItemsTheSame(oldItem: CollectionData, newItem: CollectionData): Boolean =
-        oldItem.thumbUri == newItem.thumbUri && !refresh
+        oldItem.id == newItem.id && !refresh
 
     override fun areContentsTheSame(oldItem: CollectionData, newItem: CollectionData): Boolean =
         oldItem == newItem

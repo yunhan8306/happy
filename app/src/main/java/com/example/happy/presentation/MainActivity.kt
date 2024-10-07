@@ -1,8 +1,9 @@
-package com.example.happy
+package com.example.happy.presentation
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import com.example.happy.R
 import com.example.happy.common.base.BaseActivity
 import com.example.happy.databinding.ActivityMainBinding
 import com.example.happy.common.util.LifecycleOwnerWrapper

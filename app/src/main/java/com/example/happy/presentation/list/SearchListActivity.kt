@@ -80,7 +80,7 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
                         showToast("실패")
                     }
                     is SearchListStatus.EmptyData -> {
-                        showToast("데이터가 없습니다")
+                        showToast("소장품 검색 결과가 없습니다.")
                     }
                     is SearchListStatus.Loading -> {
                         showToast("로딩중")
@@ -122,10 +122,16 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
 
         btnSearch.setFirstClickEvent {
             lifecycleScope.safeLaunch {
-                searchListAdapter.refresh = true
-                viewModel.refresh()
-                hideKeyBoard()
-                viewModel.getSearchList(editTextInput.text.toString())
+
+                if(editTextInput.text.isEmpty()) {
+                    showToast("검색어를 입력해주세요.")
+                } else {
+                    searchListAdapter.refresh = true
+                    viewModel.refresh()
+                    hideKeyBoard()
+                    viewModel.getSearchList(editTextInput.text.toString())
+
+                }
             }
         }
 
@@ -161,13 +167,13 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
             }
         })
 
-        editTextInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                btnSearch.visible(editTextInput.text.length >= 2)
-            }
-        })
+//        editTextInput.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//            override fun afterTextChanged(s: Editable?) {
+//                btnSearch.visible(editTextInput.text.length >= 2)
+//            }
+//        })
     }
 
     private fun loadMore() {

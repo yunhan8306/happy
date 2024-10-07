@@ -52,7 +52,6 @@ class DetailViewModel @Inject constructor(
     private fun fetch() {
         viewModelScope.safeLaunch {
             likeList.collectLatest { likeList ->
-                Log.d("qwe123", "likeList - $likeList")
                 collectionData?.let { data ->
                     _state.value = _state.value.copy(
                         status = DetailStatus.Success,
@@ -76,8 +75,7 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun addLike() {
-        viewModelScope.launch {
-            Log.d("qwe123", "addLike: ${_state.value.isLike}")
+        viewModelScope.safeLaunch {
             if(_state.value.isLike) {
                 deleteLikeUseCase.invoke(state.value.data)
             } else {

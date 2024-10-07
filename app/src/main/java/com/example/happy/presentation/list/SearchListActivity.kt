@@ -7,21 +7,28 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.happy.common.base.BaseActivity
 import com.example.happy.common.util.LifecycleOwnerWrapper
 import com.example.happy.common.util.ScrollLinearLayoutManager
+import com.example.happy.common.util.launchBottomSheetDialogFragment
 import com.example.happy.common.util.safeLaunch
 import com.example.happy.common.util.showToast
 import com.example.happy.common.util.visible
 import com.example.happy.databinding.ActivityListBinding
 import com.example.happy.model.CollectionData
+import com.example.happy.model.FilterData
 import com.example.happy.model.SearchListStatus
+import com.example.happy.model.getCategoryList
+import com.example.happy.model.getSortingList
 import com.example.happy.presentation.detail.DetailActivity
+import com.example.happy.presentation.filter.BottomSheetFilterDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWrapper {
@@ -79,6 +86,13 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
                 }
             }
         }
+
+        lifecycleScope.safeLaunch {
+            totalFilterData.collectLatest {
+                binding.btnCategory.text = it.first.name
+                binding.btnSorting.text = it.second.name
+            }
+        }
     }
 
     private fun addListeners() = with(binding) {
@@ -96,6 +110,18 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
                 hideKeyBoard()
                 viewModel.getSearchList(editTextInput.text.toString())
             }
+        }
+
+        btnCategory.setFirstClickEvent {
+            showFilter("category", viewModel.totalFilterData.value.first.getCategoryList())
+        }
+
+        btnSorting.setFirstClickEvent {
+            showFilter("sorting", viewModel.totalFilterData.value.second.getSortingList())
+        }
+
+        btnReset.setFirstClickEvent {
+            viewModel.resetFilter()
         }
 
         recyclerViewCollection.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -141,5 +167,30 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
     private fun hideKeyBoard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.editTextInput.windowToken, 0)
+    }
+
+    private fun showFilter(filterType: String, filterList: List<FilterData>) {
+        lifecycleScope.safeLaunch {
+            val filterDialog = BottomSheetFilterDialog().apply {
+                arguments = bundleOf("filterList" to filterList)
+            }
+            launchBottomSheetDialogFragment(
+                dialogFragment = filterDialog,
+                dismissResult = {
+                    lifecycleScope.safeLaunch {
+                        selectFilter(filterType, it)
+                        filterDialog.dismissAllowingStateLoss()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun selectFilter(filterType: String, data: FilterData?) {
+        lifecycleScope.safeLaunch {
+            searchListAdapter.refresh = true
+            viewModel.setFilter(filterType, data)
+            binding.recyclerViewCollection.scrollToPosition(0)
+        }
     }
 }

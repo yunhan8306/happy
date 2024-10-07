@@ -3,6 +3,7 @@ package com.example.happy.presentation.navigation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.happy.common.util.safeLaunch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +19,7 @@ class NavigationViewModel @Inject constructor(
     val navigationState = _navigationState.asStateFlow()
 
     fun selectNavigation(menu: NavigationType) {
-        viewModelScope.launch {
+        viewModelScope.safeLaunch {
             _navigationState.value = menu
         }
     }

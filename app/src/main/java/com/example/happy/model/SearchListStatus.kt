@@ -7,6 +7,8 @@ sealed interface SearchListStatus {
     object End: SearchListStatus
     data class Success(
         val totalCnt: Int,
-        val list: List<CollectionData>
+        val list: List<CollectionData>,
+        val category: FilterData? = null,
+        val sorting: FilterData = FilterData(0, "오름차순, true")
     ): SearchListStatus
 }

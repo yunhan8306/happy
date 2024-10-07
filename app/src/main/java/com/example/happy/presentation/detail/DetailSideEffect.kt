@@ -19,4 +19,5 @@ sealed interface DetailStatus {
 
 sealed interface DetailSideEffect {
     object Back: DetailSideEffect
+    object GoLike: DetailSideEffect
 }

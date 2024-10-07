@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
@@ -12,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.happy.common.base.BaseActivity
+import com.example.happy.common.config.AppConfig
 import com.example.happy.common.util.LifecycleOwnerWrapper
 import com.example.happy.common.util.ScrollLinearLayoutManager
 import com.example.happy.common.util.launchBottomSheetDialogFragment
@@ -19,6 +21,7 @@ import com.example.happy.common.util.safeLaunch
 import com.example.happy.common.util.showToast
 import com.example.happy.common.util.visible
 import com.example.happy.databinding.ActivityListBinding
+import com.example.happy.model.AppSideEffect
 import com.example.happy.model.CollectionData
 import com.example.happy.model.FilterData
 import com.example.happy.model.SearchListStatus
@@ -26,6 +29,7 @@ import com.example.happy.model.getCategoryList
 import com.example.happy.model.getSortingList
 import com.example.happy.presentation.detail.DetailActivity
 import com.example.happy.presentation.filter.BottomSheetFilterDialog
+import com.example.happy.presentation.navigation.NavigationType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,6 +54,7 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
     override fun initActivity(savedInstanceState: Bundle?) {
         setUI()
         collectViewModel()
+        collectAppConfig()
         addListeners()
     }
 
@@ -91,6 +96,18 @@ class SearchListActivity: BaseActivity<ActivityListBinding>(), LifecycleOwnerWra
             totalFilterData.collectLatest {
                 binding.btnCategory.text = it.first.name
                 binding.btnSorting.text = it.second.name
+            }
+        }
+    }
+
+    private fun collectAppConfig() = with(AppConfig) {
+        lifecycleScope.safeLaunch {
+            appSideEffect.collectLatest {
+                when(it) {
+                    is AppSideEffect.GoToNavLike -> {
+                        finish()
+                    }
+                }
             }
         }
     }

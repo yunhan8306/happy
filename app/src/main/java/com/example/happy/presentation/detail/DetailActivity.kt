@@ -11,7 +11,6 @@ class DetailActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("qwe123", "onCreate: ")
         setContent {
             DetailRoute()
         }

@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.happy.common.config.AppConfig
+import com.example.happy.model.AppSideEffect
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -26,6 +28,10 @@ fun DetailRoute(
         viewModel.sideEffect.collectLatest {
             when(it) {
                 DetailSideEffect.Back -> {
+                    activity.finish()
+                }
+                DetailSideEffect.GoLike -> {
+                    AppConfig.sendSideEffect(AppSideEffect.GoToNavLike)
                     activity.finish()
                 }
             }

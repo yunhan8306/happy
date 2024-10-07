@@ -3,19 +3,24 @@ package com.example.happy.presentation
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.happy.R
 import com.example.happy.common.base.BaseActivity
-import com.example.happy.databinding.ActivityMainBinding
+import com.example.happy.common.config.AppConfig
 import com.example.happy.common.util.LifecycleOwnerWrapper
 import com.example.happy.common.util.addFragment
 import com.example.happy.common.util.hideFragment
+import com.example.happy.common.util.safeLaunch
 import com.example.happy.common.util.showFragment
+import com.example.happy.databinding.ActivityMainBinding
+import com.example.happy.model.AppSideEffect
 import com.example.happy.presentation.like.LikeFragment
 import com.example.happy.presentation.navigation.NavigationFragment
 import com.example.happy.presentation.navigation.NavigationType
 import com.example.happy.presentation.navigation.NavigationViewModel
 import com.example.happy.presentation.search.SearchFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper {
@@ -32,12 +37,25 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LifecycleOwnerWrapper 
 
     override fun initActivity(savedInstanceState: Bundle?) {
         collectViewModel()
+        collectAppConfig()
         addNavigationFragment()
     }
 
     private fun collectViewModel() = with(navigationViewModel) {
         navigationState.onResult { navigationType ->
             selectOnTopFragment(navigationType)
+        }
+    }
+
+    private fun collectAppConfig() = with(AppConfig) {
+        lifecycleScope.safeLaunch {
+            appSideEffect.collectLatest {
+                when(it) {
+                    is AppSideEffect.GoToNavLike -> {
+                        navigationViewModel.selectNavigation(NavigationType.Like)
+                    }
+                }
+            }
         }
     }
 

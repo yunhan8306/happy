@@ -9,11 +9,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.happy.common.base.BaseFragment
+import com.example.happy.common.config.AppConfig
 import com.example.happy.common.util.ScrollLinearLayoutManager
 import com.example.happy.common.util.safeLaunch
 import com.example.happy.common.util.showToast
 import com.example.happy.common.util.visible
 import com.example.happy.databinding.FragmentLikeBinding
+import com.example.happy.model.AppSideEffect
 import com.example.happy.model.CollectionData
 import com.example.happy.presentation.detail.DetailActivity
 import com.example.happy.presentation.list.SearchListAdapter
@@ -44,6 +46,7 @@ class LikeFragment @Inject constructor() : BaseFragment<FragmentLikeBinding>() {
     override fun initFragment(savedInstanceState: Bundle?) {
         setUI()
         collectViewModel()
+        collectAppConfig()
         addListeners()
     }
 
@@ -58,6 +61,20 @@ class LikeFragment @Inject constructor() : BaseFragment<FragmentLikeBinding>() {
         lifecycleScope.safeLaunch {
             likeList.collectLatest {
                 likeListAdapter.submit(it)
+            }
+        }
+    }
+
+    private fun collectAppConfig() = with(AppConfig) {
+        lifecycleScope.safeLaunch {
+            appSideEffect.collectLatest {
+                when (it) {
+                    is AppSideEffect.GoToNavLike -> {
+                        lifecycleScope.safeLaunch {
+                            binding.recyclerViewCollection.scrollToPosition(0)
+                        }
+                    }
+                }
             }
         }
     }

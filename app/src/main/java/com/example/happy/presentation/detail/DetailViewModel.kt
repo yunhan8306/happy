@@ -80,6 +80,7 @@ class DetailViewModel @Inject constructor(
                 deleteLikeUseCase.invoke(state.value.data)
             } else {
                 addLikeUseCase.invoke(state.value.data)
+                _sideEffect.emit(DetailSideEffect.GoLike)
             }
         }
     }
